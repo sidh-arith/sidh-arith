@@ -1,11 +1,11 @@
 CC=gcc
 
-all: bench_ms.exe bench_ours.exe bench_shifted.exe bench_double.exe bench_1988.exe
+all: bench_ms.exe bench_ours.exe bench_shifted.exe bench_double.exe bench_1988.exe test.exe test_newprime.exe
 
 debug: CCFLAGS += -g
 debug: all
 
-run: all
+benchmark: all
 	@echo "MS"
 	@./bench_ms.exe
 	@echo "\nOURS"
@@ -24,6 +24,10 @@ count:
 	./count.py doublelimb_asm.S
 	./count.py interleaved_asm.S
 
+test: test.exe test_newprime.exe
+	./test.exe
+	./test_newprime.exe
+
 bench_ms.exe: benchmark.c fp_x64_asm.o 
 	$(CC) $(CCFLAGS) -o $@ -DFUNNAME=rdc751_asm $^ -L/usr/local/lib -lgmp -lm
 
@@ -40,22 +44,39 @@ bench_double.exe: benchmark.c doublelimb_asm.o
 bench_1988.exe: benchmark.c better_prime.o
 	$(CC) $(CCFLAGS) -o $@ -DFUNNAME=rdcnewp $^ -L/usr/local/lib -lgmp -lm
 
-shifted.o: shifted.S
-	gcc $(FLAGS) -c $^
+interleavedMontgomery1.o: interleavedMontgomery.c
+	$(CC) $(FLAGS) -D VERSION1 -o $@ -c $^
 
-better_prime.o: better_prime.S
-	gcc $(FLAGS) -c $^
+interleavedMontgomery2.o: interleavedMontgomery.c
+	$(CC) $(FLAGS) -D VERSION2 -o $@ -c $^
 
-fp_x64_asm.o: fp_x64_asm.S
+interleaved_asm.o: interleaved_asm.S
 	gcc $(FLAGS) -c $^
 
 doublelimb_asm.o: doublelimb_asm.S
 	gcc $(FLAGS) -c $^
 
-interleaved_asm.o: interleaved_asm.S
+better_prime.o: better_prime.S
 	gcc $(FLAGS) -c $^
 
-.PHONY: clean all run debug
+shifted.o: shifted.S
+	gcc $(FLAGS) -c $^
+
+fp_x64_asm.o: fp_x64_asm.S
+	gcc $(FLAGS) -c $^
+
+# std1 vs std2 vs std_asm vs doublimb
+test.exe: test.c interleavedMontgomery1.o interleavedMontgomery2.o interleaved_asm.o doublelimb_asm.o p751.o
+	$(CC) $(FLAGS) -o $@ $^ -L/usr/local/lib -lgmp
+
+test_newprime.exe: test_newprime.c better_prime.o
+	$(CC) $(FLAGS) -o $@ $^ -L/usr/local/lib -lgmp
+
+p751.o: p751.c
+	$(CC) $(FLAGS) -c $^
+
+
+.PHONY: clean all benchmark debug test
 
 clean:
 	$(RM) *.exe *.o
