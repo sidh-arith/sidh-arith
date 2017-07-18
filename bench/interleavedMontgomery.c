@@ -4,9 +4,9 @@
 #include <gmp.h>
 #include "p751.h"
 
-
-//#include "../SIDH_internal.h"
-
+#if INTEGRATE
+#define VERSION1 1
+#endif
 
 // Global constants
 #define NWORDS_FIELD 12
@@ -25,13 +25,17 @@
 /* Version 1 needs 12*7 = 84 muls
  * Version 2 needs 12*6 = 72 muls
  */
-//void rdc_mont_joppe(mp_limb_t *a, mp_limb_t *c) {
+#if INTEGRATE
+void rdc_mont(uint64_t *a, uint64_t *c) {
+#else
 #if VERSION1
 void interleaved_rdc_mont1(uint64_t *a, uint64_t *c) {
 #endif
 #if VERSION2
 void interleaved_rdc_mont2(uint64_t *a, uint64_t *c) {
 #endif
+#endif
+
   mp_limb_t t1[24] = {0}, A[24]={0};
 
 #if VERSION1

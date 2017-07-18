@@ -34,13 +34,17 @@ ifeq "$(ARCH)" "ARM"
 endif
 
 cc=$(COMPILER)
-CFLAGS=-c $(OPT) $(ADDITIONAL_SETTINGS) -D $(ARCHITECTURE) -D __LINUX__ $(USE_ASM) $(USE_GENERIC)
-LDFLAGS=
+CFLAGS=-g -c $(OPT) $(ADDITIONAL_SETTINGS) -D $(ARCHITECTURE) -D __LINUX__ $(USE_ASM) $(USE_GENERIC)
+LDFLAGS=-lgmp
 ifeq "$(GENERIC)" "TRUE"
     EXTRA_OBJECTS=fp_generic.o
 else
 ifeq "$(ARCH)" "x64"
-    EXTRA_OBJECTS=fp_x64.o fp_x64_asm.o
+	# uncomment file for testing
+    EXTRA_OBJECTS=fp_x64.o fp_x64_asm.o shifted.o
+    #EXTRA_OBJECTS=fp_x64.o fp_x64_asm.o doublelimb_asm.o
+    #EXTRA_OBJECTS=fp_x64.o fp_x64_asm.o interleaved_asm.o
+    #EXTRA_OBJECTS=fp_x64.o fp_x64_asm.o interleavedMontgomery.o
 endif
 endif
 OBJECTS=kex.o ec_isogeny.o validate.o SIDH.o SIDH_setup.o fpx.o $(EXTRA_OBJECTS)
@@ -49,7 +53,19 @@ OBJECTS_KEX_TEST=kex_tests.o $(OBJECTS_TEST) $(OBJECTS)
 OBJECTS_ALL=$(OBJECTS) $(OBJECTS_KEX_TEST)
 
 kex_test: $(OBJECTS_KEX_TEST)
-	$(CC) -o kex_test $(OBJECTS_KEX_TEST) $(ARM_SETTING)
+	$(CC) -o kex_test $(OBJECTS_KEX_TEST) $(ARM_SETTING) $(LDFLAGS)
+
+interleavedMontgomery.o:
+	$(CC) $(CFLAGS) -D INTEGRATE ../bench/interleavedMontgomery.c
+
+interleaved_asm.o:
+	$(CC) $(CFLAGS) -D INTEGRATE ../bench/interleaved_asm.S
+
+shifted.o:
+	$(CC) $(CFLAGS) -D INTEGRATE ../bench/shifted.S
+
+doublelimb_asm.o:
+	$(CC) $(CFLAGS) -D INTEGRATE ../bench/doublelimb_asm.S
 
 kex.o: kex.c SIDH_internal.h
 	$(CC) $(CFLAGS) kex.c
@@ -91,5 +107,5 @@ kex_tests.o: tests/kex_tests.c SIDH.h
 .PHONY: clean
 
 clean:
-	rm kex_test fp_generic.o fp_x64.o fp_x64_asm.o $(OBJECTS_ALL)
+	rm -f kex_test fp_generic.o fp_x64.o fp_x64_asm.o interleavedMontgomery.o shifted.o interleaved_asm.o doublelimb_asm.o $(OBJECTS_ALL)
 

@@ -36,7 +36,7 @@ bench_ours.exe: benchmark.c interleaved_asm.o
 	$(CC) $(CCFLAGS) -o $@ -DFUNNAME=interleaved_asm_rdc_mont $^ -L/usr/local/lib -lgmp -lm
 
 bench_shifted.exe: benchmark.c shifted.o
-	$(CC) $(CCFLAGS) -o $@ -DFUNNAME=rdc751_asm $^ -L/usr/local/lib -lgmp -lm
+	$(CC) $(CCFLAGS) -o $@ -DFUNNAME=shifted_rdc_mont $^ -L/usr/local/lib -lgmp -lm
 
 bench_double.exe: benchmark.c doublelimb_asm.o
 	$(CC) $(CCFLAGS) -o $@ -DFUNNAME=doublelimb_asm_rdc_mont $^ -L/usr/local/lib -lgmp -lm
@@ -66,7 +66,7 @@ fp_x64_asm.o: fp_x64_asm.S
 	gcc $(FLAGS) -c $^
 
 # std1 vs std2 vs std_asm vs doublimb
-test.exe: test.c interleavedMontgomery1.o interleavedMontgomery2.o interleaved_asm.o doublelimb_asm.o p751.o
+test.exe: test.c interleavedMontgomery1.o interleavedMontgomery2.o interleaved_asm.o shifted.o doublelimb_asm.o p751.o
 	$(CC) $(FLAGS) -o $@ $^ -L/usr/local/lib -lgmp
 
 test_newprime.exe: test_newprime.c better_prime.o

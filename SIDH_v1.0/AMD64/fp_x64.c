@@ -520,7 +520,7 @@ void mp_mul_comba(digit_t* a, digit_t* b, digit_t* c, unsigned int nwords)
 }
 
 
-void rdc_mont(dfelm_t ma, felm_t mc)
+void rdc_mont_ORIG(dfelm_t ma, felm_t mc)
 { // Optimized Montgomery reduction using comba and exploiting the special form of the prime p751.
   // mc = ma*mb*R^-1 mod p751, where ma,mb,mc in [0, p751-1] and R = 2^768.
   // ma and mb are assumed to be in Montgomery representation.

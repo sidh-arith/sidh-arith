@@ -8,6 +8,7 @@
 void interleaved_rdc_mont1(uint64_t *ma, uint64_t *mc);
 void interleaved_rdc_mont2(uint64_t *ma, uint64_t *mc);
 void interleaved_asm_rdc_mont(uint64_t* ma, uint64_t* mc);
+void shifted_rdc_mont(uint64_t* ma, uint64_t* mc);
 void doublelimb_asm_rdc_mont(uint64_t* ma, uint64_t* mc);
 
 #define outsize 12
@@ -77,6 +78,16 @@ int test () {
             return 2;
         }
 
+        mp_limb_t out_shifted[outsize];
+        shifted_rdc_mont(n->_mp_d, out_shifted);
+        if(mpz_cmp(nbackup, n) != 0) {
+            printf("Input destroyed!\n");
+        }
+        if(mpn_cmp(out_shifted, p->_mp_d, 12) > 0) {
+            printf("Output is not completely reduced!\n");
+            return 2;
+        }
+
         mp_limb_t out_doublelimb_asm[outsize];
         doublelimb_asm_rdc_mont(n->_mp_d, out_doublelimb_asm);
         if(mpz_cmp(nbackup, n) != 0) {
@@ -91,6 +102,7 @@ int test () {
             if(out_interleaved1[i] != out_interleaved2[i] ||
                out_interleaved1[i] != out->_mp_d[i] ||
                out_interleaved1[i] != out_interleaved_asm[i] ||
+               out_interleaved1[i] != out_shifted[i] ||
                out_interleaved1[i] != out_doublelimb_asm[i]) {
                 printf("Outputs don't match!\n");
                 return 1;

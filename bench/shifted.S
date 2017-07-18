@@ -11,12 +11,12 @@
 
 .intel_syntax noprefix 
 
-.data
-msg:  .string "val:    %016lx\n"
-msg2: .string "2nd:    %016lx\n"
-msg3: .string "3nd:    %016lx\n"
-msg4: .string "v_temp: %016lx\n"
-
+//.data
+//msg:  .string "val:    %016lx\n"
+//msg2: .string "2nd:    %016lx\n"
+//msg3: .string "3nd:    %016lx\n"
+//msg4: .string "v_temp: %016lx\n"
+//
 //#define SHOW(reg) \
 //    push rdi; \
 //    push rsi; \
@@ -158,8 +158,13 @@ msg4: .string "v_temp: %016lx\n"
 //  Operation: c [reg_p2] = a [reg_p1]
 //  NOTE: a=c is not allowed
 //*********************************************************************** 
-.global rdc751_asm
-rdc751_asm:
+#ifdef INTEGRATE
+.global rdc_mont
+rdc_mont:
+#else
+.global shifted_rdc_mont
+shifted_rdc_mont:
+#endif
     push rbp // save base pointer
     mov rbp, rsp // stack top is new base
 

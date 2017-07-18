@@ -8,8 +8,13 @@
 
 .text
 
+#ifdef INTEGRATE
+.global rdc_mont
+rdc_mont:
+#else
 .global doublelimb_asm_rdc_mont
 doublelimb_asm_rdc_mont:
+#endif
 
 prologue:
     push rbp // save base pointer

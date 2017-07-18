@@ -8,8 +8,13 @@
 
 .text
 
+#ifdef INTEGRATE
+.global rdc_mont
+rdc_mont:
+#else
 .global interleaved_asm_rdc_mont
 interleaved_asm_rdc_mont:
+#endif
 
 //void rdc_mont(mp_limb_t *a, mp_limb_t *c) {
 #define ap rdi
