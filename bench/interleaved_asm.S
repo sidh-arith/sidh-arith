@@ -8,7 +8,9 @@
 
 .text
 
-.global rdc_mont
+.global interleaved_asm_rdc_mont
+interleaved_asm_rdc_mont:
+
 //void rdc_mont(mp_limb_t *a, mp_limb_t *c) {
 #define ap rdi
 #define cp rsi
@@ -74,9 +76,7 @@ actualcode:
     //  /* We do on purpose longer additions than needed. */
     //  mul_modulus_1 (t1, a[0]);                /* t2 = a[0] * (p+1) */
     // where 
-    //      #define mul_modulus_1(c,a) \
-    //        c[0] = 0; c[1] = 0; c[2] = 0; c[3] = 0; c[4] = 0; \
-    //        c[12] = mpn_mul_1 (c+5, mp1, 7, a)
+    //      #define mul_modulus_1(c,a) c[0] = 0; c[1] = 0; c[2] = 0; c[3] = 0; c[4] = 0; c[12] = mpn_mul_1 (c+5, mp1, 7, a)
     // =~  bigcarry = mpn_mul_1 (out, x, lnx, y)
 
     // mul r11 * rax -> rdx.rax
@@ -167,9 +167,7 @@ actualcode:
     adcq r14, 0
     // }}} </((1))>
 
-    //#define R(i)                               \
-    //  mul_modulus_1 (t1, A[0]);                \
-    //  mpn_add_n (A, A+1, t1+1, (24-1-i))
+    //#define R(i) mul_modulus_1 (t1, A[0]); mpn_add_n (A, A+1, t1+1, (24-1-i))
     // <((R1))> {{{
     // multiplication: t1 <- mp1 * A
     mov r8, [A]

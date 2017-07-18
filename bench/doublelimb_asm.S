@@ -8,8 +8,8 @@
 
 .text
 
-.global rdc_mont
-rdc_mont:
+.global doublelimb_asm_rdc_mont
+doublelimb_asm_rdc_mont:
 
 prologue:
     push rbp // save base pointer

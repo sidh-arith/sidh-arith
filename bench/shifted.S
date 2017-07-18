@@ -17,101 +17,101 @@ msg2: .string "2nd:    %016lx\n"
 msg3: .string "3nd:    %016lx\n"
 msg4: .string "v_temp: %016lx\n"
 
-#define SHOW(reg) \
-    push rdi; \
-    push rsi; \
-    push rax; \
-    push rcx; \
-    push rdx; \
-    push r8; \
-    push r9; \
-    push r10; \
-    push r11; \
-    mov rax, 0; \
-    mov rsi, reg; \
-    movabsq rdi, offset msg; \
-    call printf@PLT; \
-    pop r11; \
-    pop r10; \
-    pop r9; \
-    pop r8; \
-    pop rdx; \
-    pop rcx; \
-    pop rax; \
-    pop rsi; \
-    pop rdi;
-
-#define SHOW2(reg) \
-    push rdi; \
-    push rsi; \
-    push rax; \
-    push rcx; \
-    push rdx; \
-    push r8; \
-    push r9; \
-    push r10; \
-    push r11; \
-    mov rax, 0; \
-    mov rsi, reg; \
-    movabsq rdi, offset msg2; \
-    call printf@PLT; \
-    pop r11; \
-    pop r10; \
-    pop r9; \
-    pop r8; \
-    pop rdx; \
-    pop rcx; \
-    pop rax; \
-    pop rsi; \
-    pop rdi;
-
-#define SHOW3(reg) \
-    push rdi; \
-    push rsi; \
-    push rax; \
-    push rcx; \
-    push rdx; \
-    push r8; \
-    push r9; \
-    push r10; \
-    push r11; \
-    mov rax, 0; \
-    mov rsi, reg; \
-    movabsq rdi, offset msg3; \
-    call printf@PLT; \
-    pop r11; \
-    pop r10; \
-    pop r9; \
-    pop r8; \
-    pop rdx; \
-    pop rcx; \
-    pop rax; \
-    pop rsi; \
-    pop rdi;
-
-#define SHOWTEMP() \
-    push rdi; \
-    push rsi; \
-    push rax; \
-    push rcx; \
-    push rdx; \
-    push r8; \
-    push r9; \
-    push r10; \
-    push r11; \
-    mov rax, 0; \
-    mov rsi, [rsp+72]; \
-    movabsq rdi, offset msg4; \
-    call printf@PLT; \
-    pop r11; \
-    pop r10; \
-    pop r9; \
-    pop r8; \
-    pop rdx; \
-    pop rcx; \
-    pop rax; \
-    pop rsi; \
-    pop rdi;
+//#define SHOW(reg) \
+//    push rdi; \
+//    push rsi; \
+//    push rax; \
+//    push rcx; \
+//    push rdx; \
+//    push r8; \
+//    push r9; \
+//    push r10; \
+//    push r11; \
+//    mov rax, 0; \
+//    mov rsi, reg; \
+//    movabsq rdi, offset msg; \
+//    call printf@PLT; \
+//    pop r11; \
+//    pop r10; \
+//    pop r9; \
+//    pop r8; \
+//    pop rdx; \
+//    pop rcx; \
+//    pop rax; \
+//    pop rsi; \
+//    pop rdi;
+//
+//#define SHOW2(reg) \
+//    push rdi; \
+//    push rsi; \
+//    push rax; \
+//    push rcx; \
+//    push rdx; \
+//    push r8; \
+//    push r9; \
+//    push r10; \
+//    push r11; \
+//    mov rax, 0; \
+//    mov rsi, reg; \
+//    movabsq rdi, offset msg2; \
+//    call printf@PLT; \
+//    pop r11; \
+//    pop r10; \
+//    pop r9; \
+//    pop r8; \
+//    pop rdx; \
+//    pop rcx; \
+//    pop rax; \
+//    pop rsi; \
+//    pop rdi;
+//
+//#define SHOW3(reg) \
+//    push rdi; \
+//    push rsi; \
+//    push rax; \
+//    push rcx; \
+//    push rdx; \
+//    push r8; \
+//    push r9; \
+//    push r10; \
+//    push r11; \
+//    mov rax, 0; \
+//    mov rsi, reg; \
+//    movabsq rdi, offset msg3; \
+//    call printf@PLT; \
+//    pop r11; \
+//    pop r10; \
+//    pop r9; \
+//    pop r8; \
+//    pop rdx; \
+//    pop rcx; \
+//    pop rax; \
+//    pop rsi; \
+//    pop rdi;
+//
+//#define SHOWTEMP() \
+//    push rdi; \
+//    push rsi; \
+//    push rax; \
+//    push rcx; \
+//    push rdx; \
+//    push r8; \
+//    push r9; \
+//    push r10; \
+//    push r11; \
+//    mov rax, 0; \
+//    mov rsi, [rsp+72]; \
+//    movabsq rdi, offset msg4; \
+//    call printf@PLT; \
+//    pop r11; \
+//    pop r10; \
+//    pop r9; \
+//    pop r8; \
+//    pop rdx; \
+//    pop rcx; \
+//    pop rax; \
+//    pop rsi; \
+//    pop rdi;
 
 // Hide output for now
 #define SHOW(reg)

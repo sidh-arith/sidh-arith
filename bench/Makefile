@@ -1,6 +1,6 @@
 CC=gcc
 
-all: bench_ms bench_ours bench_shifted bench_double bench_1988
+all: bench_ms.exe bench_ours.exe bench_shifted.exe bench_double.exe bench_1988.exe
 
 debug: CCFLAGS += -g
 debug: all
@@ -17,36 +17,43 @@ run: all
 	@echo "\nMS/KCM 2^391 * 19^88 - 1"
 	@./bench_1988.exe
 
-bench_ms: fp_x64_asm.o 
-	$(CC) $(CCFLAGS) benchmark.c -DFUNNAME=rdc751_asm fp_x64_asm.o -o $@.exe -L/usr/local/lib -lgmp -lm
+count:
+	./count.py shifted.S
+	./count.py better_prime.S
+	./count.py fp_x64_asm.S
+	./count.py doublelimb_asm.S
+	./count.py interleaved_asm.S
+
+bench_ms.exe: benchmark.c fp_x64_asm.o 
+	$(CC) $(CCFLAGS) -o $@ -DFUNNAME=rdc751_asm $^ -L/usr/local/lib -lgmp -lm
 
 # $@, $^ are left and right of :
-bench_ours: interleaved_asm.o
-	$(CC) $(CCFLAGS) benchmark.c -DFUNNAME=rdc_mont interleaved_asm.o -o $@.exe -L/usr/local/lib -lgmp -lm
+bench_ours.exe: benchmark.c interleaved_asm.o
+	$(CC) $(CCFLAGS) -o $@ -DFUNNAME=interleaved_asm_rdc_mont $^ -L/usr/local/lib -lgmp -lm
 
-bench_shifted: shifted.o
-	$(CC) $(CCFLAGS) benchmark.c -DFUNNAME=rdc751_asm shifted.o -o $@.exe -L/usr/local/lib -lgmp -lm
+bench_shifted.exe: benchmark.c shifted.o
+	$(CC) $(CCFLAGS) -o $@ -DFUNNAME=rdc751_asm $^ -L/usr/local/lib -lgmp -lm
 
-bench_double: doublelimb_asm.o
-	$(CC) $(CCFLAGS) benchmark.c -DFUNNAME=rdc_mont doublelimb_asm.o -o $@.exe -L/usr/local/lib -lgmp -lm
+bench_double.exe: benchmark.c doublelimb_asm.o
+	$(CC) $(CCFLAGS) -o $@ -DFUNNAME=doublelimb_asm_rdc_mont $^ -L/usr/local/lib -lgmp -lm
 
-bench_1988: msr_better_prime.o
-	$(CC) $(CCFLAGS) benchmark.c -DFUNNAME=rdcnewp msr_better_prime.o -o $@.exe -L/usr/local/lib -lgmp -lm
+bench_1988.exe: benchmark.c better_prime.o
+	$(CC) $(CCFLAGS) -o $@ -DFUNNAME=rdcnewp $^ -L/usr/local/lib -lgmp -lm
 
-shifted.o:
-	gcc $(FLAGS) -c shifted.S
+shifted.o: shifted.S
+	gcc $(FLAGS) -c $^
 
-msr_better_prime.o:
-	gcc $(FLAGS) -c msr_better_prime.S
+better_prime.o: better_prime.S
+	gcc $(FLAGS) -c $^
 
-fp_x64_asm.o:
-	gcc $(FLAGS) -c fp_x64_asm.S
+fp_x64_asm.o: fp_x64_asm.S
+	gcc $(FLAGS) -c $^
 
-doublelimb_asm.o:
-	gcc $(FLAGS) -c doublelimb_asm.S
+doublelimb_asm.o: doublelimb_asm.S
+	gcc $(FLAGS) -c $^
 
 interleaved_asm.o: interleaved_asm.S
-	gcc $(FLAGS) -c interleaved_asm.S
+	gcc $(FLAGS) -c $^
 
 .PHONY: clean all run debug
 

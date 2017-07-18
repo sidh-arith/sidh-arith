@@ -16,13 +16,6 @@
 #define reg_p2  rsi
 #define reg_p3  rdx
 
-#define newp_0     0xFFFFFFFFFFFFFFFF
-#define newp_6     0x3e31bcfdf223307f
-#define newp_7     0xdc45cb1358110f86
-#define newp_8     0xb61b2613a4ec956d
-#define newp_9     0x545ff2ae1094c89e
-#define newp_10    0xef8e9de28b31ae8b
-#define newp_11    0x1c33308ae5911ef8
 
 #define newpp1_0   0x0
 #define newpp1_5   0x0
@@ -33,6 +26,14 @@
 #define newpp1_10  0xef8e9de28b31ae8b
 #define newpp1_11  0x1c33308ae5911ef8
 
+#define newp_0     0xFFFFFFFFFFFFFFFF
+#define newp_5     0xFFFFFFFFFFFFFFFF
+#define newp_6     0x3e31bcfdf223307f
+#define newp_7     0xdc45cb1358110f86
+#define newp_8     0xb61b2613a4ec956d
+#define newp_9     0x545ff2ae1094c89e
+#define newp_10    0xef8e9de28b31ae8b
+#define newp_11    0x1c33308ae5911ef8
 
 .text
 //***********************************************************************
@@ -48,6 +49,9 @@ rdcnewp:
   push   r14 
   push   r15 
 
+  mov    rax, [reg_p1+40]
+  mov    [reg_p2+40], rax    // z5
+
 //   i = 6
 //   tuv += c_0 * p_6     // (1)
 //   tuv += a_6
@@ -55,33 +59,34 @@ rdcnewp:
   mov    r11, [reg_p1] // a_0
   movq   rax, newpp1_6 
   mul    r11
-  xor    r8, r8
+  xor    r9, r9
   add    rax, [reg_p1+48] // + a_6
   mov    [reg_p2+48], rax    // -> z6
-  adc    r8, rdx
+  adc    r9, rdx
   
 //   i = 7
 //   tuv += c_0 * p_7     // (1)
 //   tuv += c_1 * p_6     // (2)
 //   tuv += a_7
 //   c_7 = v
-  xor    r9, r9
+  xor    r10, r10
   movq   rax, newpp1_7 // a_0 * pp1_7
   mul    r11
-  xor    r10, r10
-  add    r8, rax
-  adc    r9, rdx
+  xor    r8, r8
+  add    r9, rax
+  adc    r10, rdx
+  adc    r8, 0
 
   mov    r12, [reg_p1+8] // + a_1 * pp1_6
   movq   rax, newpp1_6 
   mul    r12
-  add    r8, rax
-  adc    r9, rdx
+  add    r9, rax
+  adc    r10, rdx
+  adc    r8, 0
+  add    r9, [reg_p1+56] // + a_7
+  mov    [reg_p2+56], r9    // -> z7
   adc    r10, 0
-  add    r8, [reg_p1+56] // + a_7
-  mov    [reg_p2+56], r8    // -> z7
-  adc    r9, 0
-  adc    r10, 0
+  adc    r8, 0
 
 //   i = 8
 //   tuv += c_0 * p_8     // (1)
@@ -89,29 +94,29 @@ rdcnewp:
 //   tuv += c_2 * p_6     // (3)
 //   tuv += a_8
 //   c_8 = v
-  xor    r8, r8
+  xor    r9, r9
   movq   rax, newpp1_8
   mul    r11 // a_0 * p_8
-  add    r9, rax
-  adc    r10, rdx
-  adc    r8, 0
+  add    r10, rax
+  adc    r8, rdx
+  adc    r9, 0
   
   movq   rax, newpp1_7
   mul    r12 // a_1 * p_7
-  add    r9, rax
-  adc    r10, rdx
-  adc    r8, 0
+  add    r10, rax
+  adc    r8, rdx
+  adc    r9, 0
   
   mov    r13, [reg_p1+16] // a_2
   movq   rax, newpp1_6
   mul    r13 // a_2 * p_6
-  add    r9, rax
-  adc    r10, rdx
+  add    r10, rax
+  adc    r8, rdx
+  adc    r9, 0
+  add    r10, [reg_p1+64] // + a_8
+  mov    [reg_p2+64], r10    // z8
   adc    r8, 0
-  add    r9, [reg_p1+64] // + a_8
-  mov    [reg_p2+64], r9    // z8
-  adc    r10, 0
-  adc    r8, 0
+  adc    r9, 0
   
 //   i = 9
 //   tuv += c_0 * p_9     // (1)
@@ -120,36 +125,36 @@ rdcnewp:
 //   tuv += c_3 * p_6     // (4)
 //   tuv += a_9
 //   c_9 = v
-  xor    r9, r9
+  xor    r10, r10
   movq   rax, newpp1_9
   mul    r11 // a_0 * p_9
-  add    r10, rax
-  adc    r8, rdx
-  adc    r9, 0
+  add    r8, rax
+  adc    r9, rdx
+  adc    r10, 0
   
   movq   rax, newpp1_8
   mul    r12 // a_1 * p_8
-  add    r10, rax
-  adc    r8, rdx
-  adc    r9, 0
+  add    r8, rax
+  adc    r9, rdx
+  adc    r10, 0
   
   movq   rax, newpp1_7
   mul    r13 // a_2 * p_7
-  add    r10, rax
-  adc    r8, rdx
-  adc    r9, 0
+  add    r8, rax
+  adc    r9, rdx
+  adc    r10, 0
   
   mov    r14, [reg_p1+24] // a_3
   movq   rax, newpp1_6
   mul    r14 // a_3 * p_6
-  add    r10, rax
-  adc    r8, rdx
-  adc    r9, 0
+  add    r8, rax
+  adc    r9, rdx
+  adc    r10, 0
 
-  add    r10, [reg_p1+72] // + a_9
-  mov    [reg_p2+72], r10   // z9
-  adc    r8, 0
+  add    r8, [reg_p1+72] // + a_9
+  mov    [reg_p2+72], r8   // z9
   adc    r9, 0
+  adc    r10, 0
   
 //   i = 10
 //   tuv += c_0 * p_10     // (1)
@@ -159,42 +164,42 @@ rdcnewp:
 //   tuv += c_4 * p_6     // (5)
 //   tuv += a_10
 //   c_10 = v
-  xor    r10, r10
+  xor    r8, r8
   movq   rax, newpp1_10
   mul    r11 // a_0 * p_10
-  add    r8, rax
-  adc    r9, rdx
-  adc    r10, 0
+  add    r9, rax
+  adc    r10, rdx
+  adc    r8, 0
   
   movq   rax, newpp1_9
   mul    r12 // a_1 * p_9
-  add    r8, rax
-  adc    r9, rdx
-  adc    r10, 0
+  add    r9, rax
+  adc    r10, rdx
+  adc    r8, 0
   
   movq   rax, newpp1_8
   mul    r13 // a_2 * p_8
-  add    r8, rax
-  adc    r9, rdx
-  adc    r10, 0
+  add    r9, rax
+  adc    r10, rdx
+  adc    r8, 0
   
   movq   rax, newpp1_7
   mul    r14 // a_3 * p_7
-  add    r8, rax
-  adc    r9, rdx
-  adc    r10, 0
+  add    r9, rax
+  adc    r10, rdx
+  adc    r8, 0
   
   mov    r15, [reg_p1+32] // a_4
   movq   rax, newpp1_6
   mul    r15 // a_4 * p_6
-  add    r8, rax
-  adc    r9, rdx
-  adc    r10, 0
+  add    r9, rax
+  adc    r10, rdx
+  adc    r8, 0
   
-  add    r8, [reg_p1+80] // + a_10
-  mov    [reg_p2+80], r8    // z10
-  adc    r9, 0
+  add    r9, [reg_p1+80] // + a_10
+  mov    [reg_p2+80], r9    // z10
   adc    r10, 0
+  adc    r8, 0
 
 //   i = 11
 //   tuv += c_0 * p_11     // (1)
@@ -205,100 +210,48 @@ rdcnewp:
 //   tuv += c_5 * p_6     // (6)
 //   tuv += a_11
 //   c_11 = v
-  xor    r8, r8
+  xor    r9, r9
   movq   rax, newpp1_11
   mul    r11 // a_0 * p_11
-  add    r9, rax
-  adc    r10, rdx
-  adc    r8, 0
+  add    r10, rax
+  adc    r8, rdx
+  adc    r9, 0
   
   movq   rax, newpp1_10
   mul    r12 // a_1 * p_10
-  add    r9, rax
-  adc    r10, rdx
-  adc    r8, 0
+  add    r10, rax
+  adc    r8, rdx
+  adc    r9, 0
   
   movq   rax, newpp1_9
   mul    r13 // a_2 * p_9
-  add    r9, rax
-  adc    r10, rdx
-  adc    r8, 0
+  add    r10, rax
+  adc    r8, rdx
+  adc    r9, 0
   
   movq   rax, newpp1_8
   mul    r14 // a_3 * p_8
-  add    r9, rax
-  adc    r10, rdx
-  adc    r8, 0
+  add    r10, rax
+  adc    r8, rdx
+  adc    r9, 0
   
   movq   rax, newpp1_7
   mul    r15 // a_4 * p_7
-  add    r9, rax
-  adc    r10, rdx
-  adc    r8, 0
+  add    r10, rax
+  adc    r8, rdx
+  adc    r9, 0
   
   mov    rcx, [reg_p1+40] // a_5
   movq   rax, newpp1_6
   mul    rcx // a_5 * p_6
-  add    r9, rax
-  adc    r10, rdx
-  adc    r8, 0
+  add    r10, rax
+  adc    r8, rdx
+  adc    r9, 0
 
-  add    r9, [reg_p1+88] // + a_11
-  mov    [reg_p2+88], r9    // z11
-  adc    r10, 0
+  add    r10, [reg_p1+88] // + a_11
+  mov    [reg_p2+88], r10    // z11
   adc    r8, 0
-  
-     mov r9, r8
-     mov r8, r10
-     mov r10, r9
-  
-  //xor    r9, r9
-  //movq   rax, newpp1_11 
-  //mul    r11
-  //add    r10, rax
-  //adc    r8, rdx
-  //adc    r9, 0
-  //
-  //movq   rax, newpp1_10 
-  //mul    r12
-  //add    r10, rax
-  //adc    r8, rdx
-  //adc    r9, 0
-  //
-  //movq   rax, newpp1_9 
-  //mul    r13
-  //add    r10, rax
-  //adc    r8, rdx
-  //adc    r9, 0
-  //
-  //movq   rax, newpp1_8 
-  //mul    r14
-  //add    r10, rax
-  //adc    r8, rdx
-  //adc    r9, 0
-  //
-  //movq   rax, newpp1_7 
-  //mul    r15
-  //add    r10, rax
-  //adc    r8, rdx
-  //adc    r9, 0
-  //
-  //movq   rax, newpp1_6 
-  //mul    rcx
-  //add    r10, rax
-  //adc    r8, rdx
-  //adc    r9, 0
-  //
-  //mov    r11, [reg_p2+48]
-  //movq   rax, newpp1_5 
-  //mul    r11
-  //add    r10, rax
-  //adc    r8, rdx
-  //adc    r9, 0
-  //add    r10, [reg_p1+88]
-  //mov    [reg_p2+88], r10    // z11
-  //adc    r8, 0
-  //adc    r9, 0
+  adc    r9, 0
   
 //   ===== SECOND PART =====
 
@@ -604,9 +557,9 @@ rdcnewp:
   mov    rcx, [reg_p2+88]
   movq   rax, newpp1_6
   mul    rcx // c_11 * p_6
-  add    r9, rax
-  adc    r10, rdx
-  adc    r8, 0
+  add    r10, rax
+  adc    r8, rdx
+  adc    r9, 0
   
   add    r10, [reg_p1+136] // + a_17
   mov    [reg_p2+40], r10    // z5
@@ -764,6 +717,7 @@ rdcnewp:
   mov    r13, [reg_p2+32]
   sbb    r13, rcx
   mov    r14, [reg_p2+40]
+  movq   rcx, newp_5  
   sbb    r14, rcx
   mov    r15, [reg_p2+48]
   movq   rcx, newp_6  
@@ -838,6 +792,7 @@ rdcnewp:
   adc    r10, r12
   mov    [reg_p2+88], r10 
   
+epilogue:
   pop    r15
   pop    r14
   pop    r13
