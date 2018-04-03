@@ -48,7 +48,7 @@ int main () {
   var /= i1;
   std = sqrt(var);
 
-  printf ("MS-asm: %f cycles with std=%f\n", mean, std);
+  printf ("%f cycles with std=%f\n", mean, std);
 
   R0 = i1;
 
