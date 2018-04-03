@@ -78,7 +78,7 @@ int main () {
     printf ("From %d to %d\n", R0, R1);
     if (R0-R1 == 0) break;
     R0=R1;
-    printf ("MS-asm: %f cycles with std=%f\n", mean, std);
+    printf ("%f cycles with std=%f\n", mean, std);
   } while (0);
 
 

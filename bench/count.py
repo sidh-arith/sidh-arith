@@ -43,8 +43,20 @@ def main():
         if m is not None:
             continue
 
+        # and the end of macro definitions
+        m = re.match("^\s*.end.*$", line)
+        if m is not None:
+            continue
+
         # split functions
         m = re.match("^\s*(\S+):\s*", line)
+        if m is not None:
+            funname = m.group(1)
+            if funname not in ["stuff", "epilogue", "prologue", "actualcode", "zero"]:
+                funs.append(Fun(funname))
+            continue
+
+        m = re.match("^\s*\.macro (\S+)\s*", line)
         if m is not None:
             funname = m.group(1)
             if funname not in ["stuff", "epilogue", "prologue", "actualcode", "zero"]:
@@ -56,12 +68,27 @@ def main():
             funs[-1].muls += 1
             continue
 
+        m = re.match("^\s*mulx.*$", line)
+        if m is not None:
+            funs[-1].muls += 1
+            continue
+
         m = re.match("^\s*add\s.*,.*$", line)
         if m is not None:
             funs[-1].adds += 1
             continue
 
         m = re.match("^\s*adc\s.*,.*$", line)
+        if m is not None:
+            funs[-1].adds += 1
+            continue
+
+        m = re.match("^\s*adcx\s.*,.*$", line)
+        if m is not None:
+            funs[-1].adds += 1
+            continue
+
+        m = re.match("^\s*adox\s.*,.*$", line)
         if m is not None:
             funs[-1].adds += 1
             continue

@@ -1,6 +1,6 @@
 CC=gcc
 
-all: bench_ms.exe bench_ours.exe bench_shifted.exe bench_double.exe bench_1988.exe test.exe test_newprime.exe
+all: bench_ms.exe bench_ms_SIKE.exe bench_ours.exe bench_shifted.exe bench_double.exe bench_1988.exe test.exe test_newprime.exe
 
 debug: CCFLAGS += -g
 debug: all
@@ -8,6 +8,8 @@ debug: all
 benchmark: all
 	@echo "MS"
 	@./bench_ms.exe
+	@echo "\nMS SIKE"
+	@./bench_ms_SIKE.exe
 	@echo "\nOURS"
 	@./bench_ours.exe
 	@echo "\nMS SHIFTED"
@@ -21,6 +23,7 @@ count:
 	./count.py shifted.S
 	./count.py better_prime.S
 	./count.py fp_x64_asm.S
+	./count.py fp_x64_asm_SIKE.S
 	./count.py doublelimb_asm.S
 	./count.py interleaved_asm.S
 
@@ -29,6 +32,9 @@ test: test.exe test_newprime.exe
 	./test_newprime.exe
 
 bench_ms.exe: benchmark.c fp_x64_asm.o 
+	$(CC) $(CCFLAGS) -o $@ -DFUNNAME=rdc751_asm $^ -L/usr/local/lib -lgmp -lm
+
+bench_ms_SIKE.exe: benchmark.c fp_x64_asm_SIKE.o 
 	$(CC) $(CCFLAGS) -o $@ -DFUNNAME=rdc751_asm $^ -L/usr/local/lib -lgmp -lm
 
 # $@, $^ are left and right of :
@@ -63,6 +69,9 @@ shifted.o: shifted.S
 	gcc $(FLAGS) -c $^
 
 fp_x64_asm.o: fp_x64_asm.S
+	gcc $(FLAGS) -c $^
+
+fp_x64_asm_SIKE.o: fp_x64_asm_SIKE.S
 	gcc $(FLAGS) -c $^
 
 # std1 vs std2 vs std_asm vs doublimb
